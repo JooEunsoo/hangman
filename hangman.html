@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman</title>
+</head>
+<body>
+    <input id="input">
+    <div id="answer"></div>
+    <div id="msg" style="color:red"></div>
+    <button id="reset" style="display: none;">reset</button>
+    <script>
+        var ANSWER = "#answer", MSG = "#msg", INPUT = "#input", RESET = "#reset"
+        //단어 배열
+        var words = [
+            "javascript",
+            "monkey",
+            "amazing",
+            "pancake"
+        ];
+        var word = ""
+        var remainingLetters = 0
+        var trial = 0
+        var answerArray = [];
+        var falseArray = [];
+        function reset(){
+            //단어 고르기
+            word = words[Math.floor(Math.random()*words.length)];
+            //정답 배열
+            answerArray.length = 0;
+            falseArray.length = 0;
+            for (var i=0; i<word.length; i++) {
+                answerArray[i] = "_";
+            }
+            remainingLetters = word.length;
+            trial = 10;
+            document.querySelector(RESET).style.display = "none"
+            document.querySelector(ANSWER).innerHTML = ""
+            document.querySelector(MSG).innerHTML = ""
+        }
+        document.querySelector(RESET).onclick = reset
+        document.querySelector(INPUT).onkeyup = e=>{
+            process(e.target.value)
+            e.target.value = ""
+        }
+
+        function process(guess){
+            if(guess == null || guess == "") return
+            guess = guess.toLowerCase()
+            var msg = ""
+            if(answerArray.indexOf(guess) > -1){
+                msg = guess+"는 이미 맞춘 글자야"
+            }else{
+                trial -= 1;
+                var answer = ""
+                if(remainingLetters == 0 || trial <= 0){
+                    document.querySelector(INPUT).disable = true
+                    var color = ""
+                    if(remainingLetters == 0){
+                        answer = "ㅊㅋ! "
+                        color = "green"
+                    }else{
+                        answer = "이것도 못맞추다니... "
+                        color = "red"
+                    }
+                    answer = "<div>" + answerArray.join(" ") + "</div><div style=\"color:" + color + "\">" + answer +"정답은 " +word+ "입니다.</div>"
+                    document.querySelector(RESET).style.display = "block"
+                }else{
+                    var isAnswer = false
+                    for (var j = 0; j < word.length; j++){
+                        if(word[j] === guess) {   
+                            isAnswer = true
+                            answerArray[j] = guess;
+                            remainingLetters--;
+                        }
+                    }
+                    
+                    if(!isAnswer){
+                        if(falseArray.indexOf(guess) == -1){
+                            falseArray.push(guess)
+                            msg = "엄한 글자"
+                        }else{
+                            msg = "엄한 글자 - 또 입력하냐?"
+                        }
+                    }else{
+                        msg = ""  
+                    }
+                    answer = "<div>" + answerArray.join(" ") + "</div><div>남은 시도횟수 :" + trial + "</div>";
+                }
+                document.querySelector(ANSWER).innerHTML = answer
+            }
+            document.querySelector(MSG).innerHTML = msg
+        }
+        reset()
+        //var name = prompt("이름이 뭐예요?");
+        //var text = document.createTextNode("안녕하세요, " + name + "님")
+        //document.querySelector("p").appendChild(text);
+
+        /*단어 고르기
+
+        while(단어를 맞히지 못함) {
+            현재 상태 보여주기
+            추측한 글자 가져오기
+            if(게임 중단 원함){
+                게임 종료
+            }else if(여러글자 고름)(
+                한 글자만 고르라고 말해주기
+            )else {
+                if(고른 글자가 단어 안에 있음) {
+                    추측한 글자 넣어서 현재 상태 보여주기
+                }
+            }
+        }
+        정답*/
+
+
+        /*
+        console.log(answerArray);
+        console.log(remainingLetters);
+
+        //게임 반목문
+        
+        while (remainingLetters > 0 && trial > 0) {
+            //플레이어 상태
+            alert(answerArray.join(" "));
+            //플레이어 입력
+            var guess = prompt("글자 입력 플리즈~ 취소하면 겜종. 남은 글자는 "+remainingLetters+"개, 남은 횟수는 "+trial+"번");
+            guess = guess.toLowerCase();
+            if(guess === null) {
+                break;
+            }else if(guess.length !== 1){
+                alert("한 글자만 입력 플리즈~")
+            }else if(answerArray.indexOf(guess) > -1){
+                alert( guess+"는 이미 입력한 글자야")
+            }else{
+                //글자 맞히면 업데이트
+                trial -= 1;
+                for (var j = 0; j < word.length; j++){
+                    if(word[j] === guess) {   
+                        answerArray[j] = guess;
+                        remainingLetters--;
+                    }
+                }
+            }
+        }
+        //정답
+        alert(answerArray.join(" "));
+        alert("ㅊㅋ! 정답은 " +word+ "입니다.");
+        */
+    </script>
+</body>
+</html>
